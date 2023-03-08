@@ -14,7 +14,7 @@ def get_labor_list(Big: str, JSE: str):
         "BIGipServerpoolhub-gcxlgl": Big,
         "JSESSIONID": JSE
     })
-    cookies = "BIGipServerpoolhub-gcxlgl="+Big+";JSESSIONID="+JSE
+    cookies = "BIGipServerpoolhub-gcxlgl=" + Big + ";JSESSIONID=" + JSE
     try:
         data = json.loads(response.content.decode())
     except json.JSONDecodeError:
@@ -23,7 +23,7 @@ def get_labor_list(Big: str, JSE: str):
         return
 
     CourseList = data["returnData"]["list"]
-    print(data)
+    # print(data)
 
     # 打印空闲课堂
     for i in CourseList:
@@ -31,17 +31,16 @@ def get_labor_list(Big: str, JSE: str):
         if i["KXKTS"] != 0:
             print("课程名称:{0} 空闲课堂数:{1}".format(i["KCMC"], i["KXKTS"]))
             get_course_list(cookies, i["KCID"])
-def get_course_list(cookies: str, kcid: int):
+
+
+def get_course_list(cookies, kcid: int):
     url = "http://gcxl.hust.edu.cn/ldjy_wechat/publicBenLabor/student/queryOptionalCLRMList.do"
-    headers = {
-        "Cookie": cookies,
-    }
     params = {
         "pageNum": 1,
         "pageSize": 200,
         "kcid": kcid,
     }
-    response = rq.request(method="get", url=url, params=params, headers=headers)
+    response = rq.request(method="get", url=url, params=params, cookies=cookies)
     data = json.loads(response.content.decode())
     if data["returnMsg"] == "您好，没有找到符合条件的课堂！":
         print("您好，没有找到符合条件的课堂！")
